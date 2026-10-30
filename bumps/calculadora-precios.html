@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="fil">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora ng Presyo ng Crochet — Ang Crochet Library ng Negosyante</title>
+<style>
+  :root {
+    --bg: #FFF9F4;
+    --card: #FFFFFF;
+    --accent: #7B4F2E;
+    --accent2: #C8845A;
+    --green: #3D7A5E;
+    --text: #1A1A1A;
+    --muted: #6B6B6B;
+    --border: #E8D5C4;
+    --result-bg: #F0F7F4;
+    --yellow: #FFF3CD;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system, 'Segoe UI', sans-serif; min-height: 100vh; }
+
+  header {
+    background: var(--accent);
+    color: #fff;
+    text-align: center;
+    padding: 28px 20px 24px;
+  }
+  header .emoji { font-size: 36px; display: block; margin-bottom: 8px; }
+  header h1 { font-size: 22px; font-weight: 800; letter-spacing: -.3px; line-height: 1.2; }
+  header p { font-size: 14px; opacity: .85; margin-top: 6px; }
+
+  .container { max-width: 520px; margin: 0 auto; padding: 20px 16px 60px; }
+
+  .section-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 12px; margin-top: 24px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .field { margin-bottom: 16px; }
+  .field:last-child { margin-bottom: 0; }
+  label { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  label span { font-weight: 400; color: var(--muted); }
+
+  input[type="number"] {
+    width: 100%; padding: 12px 14px;
+    font-size: 18px; font-weight: 700;
+    border: 2px solid var(--border); border-radius: 10px;
+    background: #FAFAFA; color: var(--text);
+    outline: none; transition: border-color .2s;
+    -moz-appearance: textfield;
+  }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+  input[type="number"]:focus { border-color: var(--accent2); }
+
+  .input-wrap { position: relative; }
+  .input-prefix {
+    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    font-size: 16px; font-weight: 700; color: var(--muted); pointer-events: none;
+  }
+  .input-wrap input { padding-left: 34px; }
+  .input-suffix {
+    position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    font-size: 14px; font-weight: 600; color: var(--muted); pointer-events: none;
+  }
+
+  .hint { font-size: 12px; color: var(--muted); margin-top: 5px; }
+
+  .calc-btn {
+    width: 100%; padding: 16px;
+    background: var(--accent); color: #fff;
+    border: none; border-radius: 12px;
+    font-size: 17px; font-weight: 800; letter-spacing: .3px;
+    cursor: pointer; transition: background .15s;
+    margin-top: 4px;
+  }
+  .calc-btn:hover { background: #6A3F22; }
+
+  .result-card {
+    background: var(--result-bg);
+    border: 2px solid var(--green);
+    border-radius: 14px;
+    padding: 20px;
+    margin-top: 20px;
+    display: none;
+  }
+  .result-card.visible { display: block; }
+
+  .result-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 0; border-bottom: 1px solid #D4EAE1; font-size: 15px;
+  }
+  .result-row:last-child { border-bottom: none; }
+  .result-row .label { color: var(--muted); }
+  .result-row .value { font-weight: 700; color: var(--text); }
+
+  .result-main {
+    text-align: center; padding: 20px 0 12px;
+    border-bottom: 1px solid #D4EAE1; margin-bottom: 12px;
+  }
+  .result-main .tag { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--green); }
+  .result-main .price { font-size: 52px; font-weight: 900; color: var(--accent); line-height: 1.1; margin: 4px 0; }
+  .result-main .price-sub { font-size: 13px; color: var(--muted); }
+
+  .divider { height: 1px; background: var(--border); margin: 24px 0; }
+
+  /* Reference table */
+  .ref-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .ref-table th {
+    background: var(--accent); color: #fff;
+    padding: 10px 12px; text-align: left; font-weight: 700;
+  }
+  .ref-table th:not(:first-child) { text-align: center; }
+  .ref-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); }
+  .ref-table td:not(:first-child) { text-align: center; font-weight: 600; }
+  .ref-table tr:nth-child(even) td { background: #FBF5F0; }
+  .ref-table tr:last-child td { border-bottom: none; }
+
+  .tip-box {
+    background: var(--yellow);
+    border-left: 4px solid #F0A500;
+    border-radius: 0 10px 10px 0;
+    padding: 14px 16px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: #5A4200;
+  }
+  .tip-box strong { display: block; margin-bottom: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+
+  footer { text-align: center; font-size: 12px; color: var(--muted); margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="emoji">🧮</span>
+  <h1>CALCULADORA NG PRESYO<br>NG CROCHET</h1>
+  <p>Alamin kung magkano talaga ang dapat mong ibenta</p>
+</header>
+
+<div class="container">
+
+  <p class="section-label">I-input ang iyong gastos</p>
+  <div class="card">
+
+    <div class="field">
+      <label>Halaga ng Materyales <span>(hilo, buttons, atbp.)</span></label>
+      <div class="input-wrap">
+        <span class="input-prefix">₱</span>
+        <input type="number" id="materials" value="150" min="0" oninput="calcular()">
+      </div>
+      <p class="hint">Isama ang lahat: hilo, zipper, buttons, packaging</p>
+    </div>
+
+    <div class="field">
+      <label>Oras para Matapos</label>
+      <div class="input-wrap">
+        <input type="number" id="hours" value="3" min="0" step="0.5" oninput="calcular()">
+        <span class="input-suffix">oras</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Iyong Sahod Bawat Oras <span>(minimum na kita mo)</span></label>
+      <div class="input-wrap">
+        <span class="input-prefix">₱</span>
+        <input type="number" id="rate" value="80" min="0" oninput="calcular()">
+      </div>
+      <p class="hint">₱60–₱120/hr ang karaniwan. Huwag maging mababa ang tingin sa sarili!</p>
+    </div>
+
+    <div class="field">
+      <label>Dagdag na Tubo/Kita %</label>
+      <div class="input-wrap">
+        <input type="number" id="markup" value="40" min="0" max="200" oninput="calcular()">
+        <span class="input-suffix">%</span>
+      </div>
+      <p class="hint">30–50% ang magandang simula. Para sa rare/intricate designs, pwede 60–80%.</p>
+    </div>
+
+  </div>
+
+  <button class="calc-btn" onclick="calcular()">🧶 KALKULAHIN ANG PRESYO</button>
+
+  <div class="result-card" id="result">
+    <div class="result-main">
+      <div class="tag">Iminumungkahing Presyo ng Benta</div>
+      <div class="price" id="total-price">₱0</div>
+      <div class="price-sub">Rounding pataas para hindi ka malugi</div>
+    </div>
+    <div class="result-row">
+      <span class="label">Materyales</span>
+      <span class="value" id="r-materials">₱0</span>
+    </div>
+    <div class="result-row">
+      <span class="label">Bayad sa Trabaho</span>
+      <span class="value" id="r-labor">₱0</span>
+    </div>
+    <div class="result-row">
+      <span class="label">Tubo (Profit)</span>
+      <span class="value" id="r-profit">₱0</span>
+    </div>
+    <div class="tip-box" id="tip-box">
+      <strong>💡 Tip</strong>
+      <span id="tip-text"></span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <p class="section-label">Presyo ng Merkado sa Pilipinas (2024–2025)</p>
+  <div class="card" style="padding: 0; overflow: hidden;">
+    <table class="ref-table">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Mababa</th>
+          <th>Karaniwan</th>
+          <th>Premium</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Baby booties</td><td>₱150</td><td>₱250</td><td>₱400</td></tr>
+        <tr><td>Baby sweater set</td><td>₱400</td><td>₱650</td><td>₱950</td></tr>
+        <tr><td>Cardigan (adult)</td><td>₱900</td><td>₱1,400</td><td>₱2,200</td></tr>
+        <tr><td>Headband / beret</td><td>₱80</td><td>₱160</td><td>₱280</td></tr>
+        <tr><td>Crochet tote bag</td><td>₱300</td><td>₱550</td><td>₱900</td></tr>
+        <tr><td>Throw pillow cover</td><td>₱400</td><td>₱700</td><td>₱1,100</td></tr>
+        <tr><td>Amigurumi (small)</td><td>₱200</td><td>₱380</td><td>₱600</td></tr>
+        <tr><td>Table runner</td><td>₱500</td><td>₱900</td><td>₱1,500</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tip-box" style="margin-top: 16px;">
+    <strong>📌 Dapat Tandaan</strong>
+    Ang presyo sa Facebook Marketplace ay karaniwang 10–20% mas mababa kaysa sa Shopee dahil walang platform fee. Sa Shopee, dagdag mo ang 3–5% na commission ng platform sa iyong target na presyo.
+  </div>
+
+  <footer>
+    Ang Crochet Library ng Negosyante · Exclusive para sa mga members
+  </footer>
+
+</div>
+
+<script>
+function fmt(n) {
+  return '₱' + Math.ceil(n).toLocaleString('en-PH');
+}
+
+function calcular() {
+  const mat    = parseFloat(document.getElementById('materials').value) || 0;
+  const hrs    = parseFloat(document.getElementById('hours').value)     || 0;
+  const rate   = parseFloat(document.getElementById('rate').value)      || 0;
+  const markup = parseFloat(document.getElementById('markup').value)    || 0;
+
+  const labor   = hrs * rate;
+  const cost    = mat + labor;
+  const profit  = cost * (markup / 100);
+  const total   = cost + profit;
+
+  // Round to nearest nice number
+  let rounded = total;
+  if (total < 200)       rounded = Math.ceil(total / 5)  * 5;
+  else if (total < 1000) rounded = Math.ceil(total / 10) * 10;
+  else                   rounded = Math.ceil(total / 50) * 50;
+
+  document.getElementById('r-materials').textContent = fmt(mat);
+  document.getElementById('r-labor').textContent     = fmt(labor);
+  document.getElementById('r-profit').textContent    = fmt(profit);
+  document.getElementById('total-price').textContent = fmt(rounded);
+
+  // Tip
+  let tip = '';
+  if (total < 150) tip = 'Mukhang mababa ang presyo para sa ganitong item. Tingnan ang reference table sa ibaba at i-adjust ang iyong hourly rate.';
+  else if (markup < 25) tip = 'Mababa ang profit margin mo. Subukan ang 35–45% para mas kumita.';
+  else if (hrs > 5 && total < 800) tip = 'Maraming oras ang ginugol — siguraduhing hindi ka undercharging. Pwede mo i-increase ang hourly rate.';
+  else tip = 'Magandang presyo! Tiyaking naka-include na ang packaging at gas/delivery sa materials cost.';
+  document.getElementById('tip-text').textContent = tip;
+
+  document.getElementById('result').classList.add('visible');
+}
+
+// Run on load
+calcular();
+</script>
+</body>
+</html>
